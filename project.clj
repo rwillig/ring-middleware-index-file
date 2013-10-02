@@ -1,6 +1,6 @@
-(defproject com.relaynetwork/ring-middleware-index-file "1.0.5-SNAPSHOT"
+(defproject ring-middleware-index-file "1.0.5-SNAPSHOT"
   :description "Ring Middleware for serving up an index file."
   :lein-release {:deploy-via :clojars}
   :dependencies [
-    [org.clojure/clojure "1.2.1"]
-    [ring "0.2.5"]])
+    [org.clojure/clojure "1.5.1"]
+    [ring "1.2.0"]])

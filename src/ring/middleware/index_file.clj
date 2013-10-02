@@ -1,24 +1,16 @@
 (ns ring.middleware.index-file
-  (:require
-   ring.util.response))
+  (:require ring.util.response)
+  (import java.lang.String)
+  (:require [clojure.pprint :refer [pprint]]))
 
-(defn- redirect-uri [request path-with-slash]
-  (if (:query-string request)
-    (str path-with-slash "?" (:query-string request))
-    path-with-slash))
 
-(defn wrap-index-paths [handler doc-root]
-  (fn [request]
-    (let [get-method? (= :get (:request-method request))
-          uri         (:uri request)
-          fpath       (str doc-root uri "/index.html")
-          exists?     (.exists (java.io.File. fpath))]
+(defn wrap-index-paths [app index-file]
+  (fn [req]
+    (let [get-method? (= :get (:request-method req))
+          uri         (:uri req)
+          path        (:path-info req)]
       (cond
-        (and exists? (not (.endsWith uri "/")))
-        (ring.util.response/redirect (redirect-uri request (str uri "/")))
-
-        exists?
-        (ring.util.response/file-response fpath)
-
-        :no-index-file-found
-        (handler request)))))
+        (not get-method?) (app req)
+        (= "" path) (ring.util.response/redirect (str uri "/" index-file))
+        (= "/" path) (ring.util.response/redirect (str uri index-file))
+        :else (app req)))))
